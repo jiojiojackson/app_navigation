@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigation Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Navigation Dashboard</h1>
+      <button id="settingsBtn" class="settings-btn">⚙️ Settings</button>
+    </header>
+    
+    <div id="websiteGrid" class="website-grid"></div>
+  </div>
+
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Settings</h2>
+      
+      <div id="loginForm" class="form-section">
+        <input type="password" id="password" placeholder="Enter password">
+        <button id="loginBtn">Login</button>
+        <p id="loginError" class="error"></p>
+      </div>
+
+      <div id="settingsContent" style="display:none;">
+        <div class="form-section">
+          <h3>Add Website</h3>
+          <input type="text" id="websiteName" placeholder="Website Name">
+          <input type="url" id="websiteUrl" placeholder="Website URL">
+          <button id="addBtn">Add Website</button>
+        </div>
+
+        <div class="form-section">
+          <h3>Manage Websites</h3>
+          <div id="websiteList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
