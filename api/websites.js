@@ -15,6 +15,8 @@ async function initDatabase() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         url TEXT NOT NULL,
+        icon VARCHAR(50),
+        color VARCHAR(50),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -35,7 +37,7 @@ export default async function handler(req, res) {
       client.release();
     }
   } else if (req.method === 'POST') {
-    const { name, url } = req.body;
+    const { name, url, icon, color } = req.body;
     
     if (!name || !url) {
       return res.status(400).json({ error: 'Name and URL are required' });
@@ -44,8 +46,8 @@ export default async function handler(req, res) {
     const client = await pool.connect();
     try {
       const result = await client.query(
-        'INSERT INTO websites (name, url) VALUES ($1, $2) RETURNING *',
-        [name, url]
+        'INSERT INTO websites (name, url, icon, color) VALUES ($1, $2, $3, $4) RETURNING *',
+        [name, url, icon, color]
       );
       res.status(201).json(result.rows[0]);
     } finally {
