@@ -10,6 +10,7 @@ const pool = new Pool({
 async function initDatabase() {
   const client = await pool.connect();
   try {
+    // Create table if not exists
     await client.query(`
       CREATE TABLE IF NOT EXISTS websites (
         id SERIAL PRIMARY KEY,
@@ -19,6 +20,32 @@ async function initDatabase() {
         color VARCHAR(50),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
+    `);
+    
+    // Add icon column if it doesn't exist
+    await client.query(`
+      DO $$ 
+      BEGIN 
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns 
+          WHERE table_name='websites' AND column_name='icon'
+        ) THEN
+          ALTER TABLE websites ADD COLUMN icon VARCHAR(50);
+        END IF;
+      END $$;
+    `);
+    
+    // Add color column if it doesn't exist
+    await client.query(`
+      DO $$ 
+      BEGIN 
+        IF NOT EXISTS (
+          SELECT 1 FROM information_schema.columns 
+          WHERE table_name='websites' AND column_name='color'
+        ) THEN
+          ALTER TABLE websites ADD COLUMN color VARCHAR(50);
+        END IF;
+      END $$;
     `);
   } finally {
     client.release();
