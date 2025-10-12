@@ -239,7 +239,7 @@ async function loadWebsitesForSettings() {
   const response = await fetch('/api/websites');
   const websites = await response.json();
   
-  document.getElementById('websiteList').innerHTML = websites.map(site => `
+  document.getElementById('websiteList').innerHTML = websites.map((site, index) => `
     <div class="website-item">
       <div class="item-icon" style="background: ${site.color || '#667eea'}">
         ${site.icon || '🌐'}
@@ -248,9 +248,30 @@ async function loadWebsitesForSettings() {
         <strong>${site.name}</strong><br>
         <small>${site.url}</small>
       </div>
-      <button class="delete-btn" onclick="deleteWebsite(${site.id})">Delete</button>
+      <div class="item-actions">
+        <button class="move-btn" onclick="moveWebsite(${site.id}, 'up')" ${index === 0 ? 'disabled' : ''} title="Move up">
+          ↑
+        </button>
+        <button class="move-btn" onclick="moveWebsite(${site.id}, 'down')" ${index === websites.length - 1 ? 'disabled' : ''} title="Move down">
+          ↓
+        </button>
+        <button class="delete-btn" onclick="deleteWebsite(${site.id})">Delete</button>
+      </div>
     </div>
   `).join('');
+}
+
+async function moveWebsite(id, direction) {
+  const response = await fetch('/api/websites', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, direction })
+  });
+  
+  if (response.ok) {
+    loadWebsites();
+    loadWebsitesForSettings();
+  }
 }
 
 renderIconSelector();
