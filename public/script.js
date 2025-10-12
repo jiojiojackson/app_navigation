@@ -73,10 +73,20 @@ document.getElementById('addBtn').onclick = async () => {
   }
 };
 
+function getScreenshotUrl(url) {
+  try {
+    const encodedUrl = encodeURIComponent(url);
+    // Using screenshot.rocks API for website previews
+    return `https://api.screenshotmachine.com/?key=demo&url=${encodedUrl}&dimension=1024x768`;
+  } catch {
+    return '';
+  }
+}
+
 function getFaviconUrl(url) {
   try {
     const domain = new URL(url).origin;
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
   } catch {
     return '';
   }
@@ -115,16 +125,20 @@ async function loadWebsites() {
   }
   
   websiteGrid.innerHTML = websites.map(site => {
+    const screenshot = getScreenshotUrl(site.url);
     const favicon = getFaviconUrl(site.url);
     const initials = getInitials(site.name);
     const domain = getDomain(site.url);
     
     return `
       <div class="website-card" onclick="window.open('${site.url}', '_blank')">
-        <div class="card-header">
-          <div class="favicon-wrapper">
-            <img src="${favicon}" alt="${site.name}" class="favicon" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <div class="favicon-fallback" style="display:none;">${initials}</div>
+        <div class="card-preview">
+          <img src="${screenshot}" alt="${site.name}" class="preview-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="preview-fallback" style="display:none;">
+            <div class="fallback-icon">${initials}</div>
+          </div>
+          <div class="preview-overlay">
+            <img src="${favicon}" alt="" class="overlay-favicon">
           </div>
         </div>
         <div class="card-content">
