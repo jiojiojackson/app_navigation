@@ -73,15 +73,70 @@ document.getElementById('addBtn').onclick = async () => {
   }
 };
 
+function getFaviconUrl(url) {
+  try {
+    const domain = new URL(url).origin;
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+  } catch {
+    return '';
+  }
+}
+
+function getInitials(name) {
+  return name
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+function getDomain(url) {
+  try {
+    return new URL(url).hostname.replace('www.', '');
+  } catch {
+    return url;
+  }
+}
+
 async function loadWebsites() {
   const response = await fetch('/api/websites');
   const websites = await response.json();
   
-  websiteGrid.innerHTML = websites.map(site => `
-    <div class="website-card" onclick="window.open('${site.url}', '_blank')">
-      <h3>${site.name}</h3>
-    </div>
-  `).join('');
+  if (websites.length === 0) {
+    websiteGrid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📌</div>
+        <h3>No websites yet</h3>
+        <p>Click the Settings button to add your first website</p>
+      </div>
+    `;
+    return;
+  }
+  
+  websiteGrid.innerHTML = websites.map(site => {
+    const favicon = getFaviconUrl(site.url);
+    const initials = getInitials(site.name);
+    const domain = getDomain(site.url);
+    
+    return `
+      <div class="website-card" onclick="window.open('${site.url}', '_blank')">
+        <div class="card-header">
+          <div class="favicon-wrapper">
+            <img src="${favicon}" alt="${site.name}" class="favicon" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="favicon-fallback" style="display:none;">${initials}</div>
+          </div>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">${site.name}</h3>
+          <p class="card-url">${domain}</p>
+        </div>
+        <div class="card-footer">
+          <span class="visit-link">Visit →</span>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 async function loadWebsitesForSettings() {

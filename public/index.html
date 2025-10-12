@@ -1,26 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Navigation Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <div class="container">
     <header>
-      <h1>Navigation Dashboard</h1>
-      <button id="settingsBtn" class="settings-btn">⚙️ Settings</button>
+      <div class="header-content">
+        <h1>🚀 My Dashboard</h1>
+        <p class="subtitle">Quick access to your favorite websites</p>
+      </div>
+      <button id="settingsBtn" class="settings-btn">
+        <span class="settings-icon">⚙️</span>
+        <span>Settings</span>
+      </button>
     </header>
-    
-    <div id="websiteGrid" class="website-grid"></div>
+
+    <div id="websiteGrid" class="website-grid">
+      <div class="loading">Loading your websites...</div>
+    </div>
   </div>
 
   <div id="settingsModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
       <h2>Settings</h2>
-      
+
       <div id="loginForm" class="form-section">
         <input type="password" id="password" placeholder="Enter password">
         <button id="loginBtn">Login</button>
@@ -45,4 +55,5 @@
 
   <script src="script.js"></script>
 </body>
+
 </html>
