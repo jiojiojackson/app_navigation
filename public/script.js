@@ -279,8 +279,10 @@ renderIconSelector();
 async function deleteWebsite(id) {
   if (!confirm('Are you sure you want to delete this website?')) return;
   
-  const response = await fetch(`/api/websites/${id}`, {
-    method: 'DELETE'
+  const response = await fetch('/api/websites', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
   });
   
   if (response.ok) {

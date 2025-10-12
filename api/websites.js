@@ -138,7 +138,11 @@ export default async function handler(req, res) {
       client.release();
     }
   } else if (req.method === 'DELETE') {
-    const id = req.url.split('/').pop();
+    const { id } = req.body;
+    
+    if (!id) {
+      return res.status(400).json({ error: 'ID is required' });
+    }
     
     const client = await pool.connect();
     try {
