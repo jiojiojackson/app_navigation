@@ -11,6 +11,12 @@ body {
   padding: 20px;
 }
 
+@media (max-width: 768px) {
+  body {
+    padding: 12px;
+  }
+}
+
 .container {
   max-width: 1400px;
   margin: 0 auto;
@@ -23,6 +29,15 @@ header {
   margin-bottom: 50px;
   color: white;
   animation: fadeInDown 0.6s ease;
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
 }
 
 @keyframes fadeInDown {
@@ -48,6 +63,16 @@ header {
   font-weight: 300;
 }
 
+@media (max-width: 768px) {
+  .header-content h1 {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 0.95rem;
+  }
+}
+
 .settings-btn {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
@@ -62,6 +87,14 @@ header {
   align-items: center;
   gap: 8px;
   font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .settings-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 24px;
+  }
 }
 
 .settings-btn:hover {
@@ -79,6 +112,13 @@ header {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
   animation: fadeIn 0.8s ease;
+}
+
+@media (max-width: 768px) {
+  .website-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
 }
 
 @keyframes fadeIn {
@@ -106,6 +146,24 @@ header {
   padding: 80px 40px;
   border-radius: 20px;
   backdrop-filter: blur(10px);
+}
+
+@media (max-width: 768px) {
+  .empty-state {
+    padding: 40px 20px;
+  }
+  
+  .empty-icon {
+    font-size: 3rem !important;
+  }
+  
+  .empty-state h3 {
+    font-size: 1.4rem !important;
+  }
+  
+  .empty-state p {
+    font-size: 1rem !important;
+  }
 }
 
 .empty-icon {
@@ -204,6 +262,19 @@ header {
   margin-bottom: 16px;
 }
 
+@media (max-width: 768px) {
+  .icon-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .icon-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
 .icon-option {
   width: 50px;
   height: 50px;
@@ -216,6 +287,22 @@ header {
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
+}
+
+@media (max-width: 768px) {
+  .icon-option {
+    width: 45px;
+    height: 45px;
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .icon-option {
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+  }
 }
 
 .icon-option:hover {
@@ -291,6 +378,16 @@ header {
   overflow-y: auto;
 }
 
+@media (max-width: 768px) {
+  .modal-content {
+    margin: 10px;
+    padding: 20px;
+    width: calc(100% - 20px);
+    max-height: calc(100vh - 20px);
+    border-radius: 8px;
+  }
+}
+
 .close {
   color: #aaa;
   float: right;
@@ -321,6 +418,12 @@ input {
   font-size: 1rem;
 }
 
+@media (max-width: 768px) {
+  input {
+    font-size: 16px;
+  }
+}
+
 button {
   background: #667eea;
   color: white;
@@ -331,6 +434,13 @@ button {
   font-size: 1rem;
   margin-top: 10px;
   transition: background 0.3s;
+}
+
+@media (max-width: 768px) {
+  button {
+    padding: 14px 24px;
+    font-size: 16px;
+  }
 }
 
 button:hover {
@@ -350,6 +460,28 @@ button:hover {
   background: #f5f5f5;
   margin: 8px 0;
   border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .website-item {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .item-info {
+    flex-basis: 100%;
+    order: 2;
+  }
+  
+  .item-icon {
+    order: 1;
+  }
+  
+  .item-actions {
+    order: 3;
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 
 .item-icon {
