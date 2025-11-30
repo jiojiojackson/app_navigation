@@ -37,7 +37,7 @@ document.getElementById('loginBtn').onclick = async () => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ password })
   });
-  
+
   if (response.ok) {
     isAuthenticated = true;
     loginForm.style.display = 'none';
@@ -71,23 +71,23 @@ document.getElementById('websiteUrl').addEventListener('input', (e) => {
 document.getElementById('addBtn').onclick = async () => {
   const name = document.getElementById('websiteName').value;
   const url = document.getElementById('websiteUrl').value;
-  
+
   if (!name || !url) {
     alert('Please fill in both fields');
     return;
   }
-  
+
   const response = await fetch('/api/websites', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      name, 
-      url, 
+    body: JSON.stringify({
+      name,
+      url,
       icon: selectedIcon,
       color: getRandomColor()
     })
   });
-  
+
   if (response.ok) {
     document.getElementById('websiteName').value = '';
     document.getElementById('websiteUrl').value = '';
@@ -150,7 +150,7 @@ function getRandomColor() {
 
 function autoSelectIcon(name, url) {
   const text = (name + ' ' + url).toLowerCase();
-  
+
   const keywords = {
     '📧': ['mail', 'email', 'gmail', 'outlook'],
     '🎵': ['music', 'spotify', 'soundcloud', 'apple music'],
@@ -172,13 +172,13 @@ function autoSelectIcon(name, url) {
     '✈️': ['travel', 'flight', 'hotel', 'booking'],
     '📷': ['photo', 'image', 'instagram', 'unsplash']
   };
-  
+
   for (const [icon, words] of Object.entries(keywords)) {
     if (words.some(word => text.includes(word))) {
       return icon;
     }
   }
-  
+
   return iconOptions[Math.floor(Math.random() * iconOptions.length)].icon;
 }
 
@@ -199,25 +199,53 @@ function selectIcon(icon) {
 }
 
 async function loadWebsites() {
-  const response = await fetch('/api/websites');
-  const websites = await response.json();
-  
+  // 1. Try to load from cache first
+  const cachedData = localStorage.getItem('cachedWebsites');
+  if (cachedData) {
+    const websites = JSON.parse(cachedData);
+    renderWebsites(websites);
+  }
+
+  try {
+    // 2. Fetch fresh data from API
+    const response = await fetch('/api/websites');
+    const websites = await response.json();
+
+    // 3. Update cache
+    localStorage.setItem('cachedWebsites', JSON.stringify(websites));
+
+    // 4. Re-render with fresh data
+    renderWebsites(websites);
+  } catch (error) {
+    console.error('Failed to fetch websites:', error);
+    // If cache was empty and fetch failed, show empty state or error
+    if (!cachedData) {
+      renderEmptyState();
+    }
+  }
+}
+
+function renderEmptyState() {
+  websiteGrid.innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">📌</div>
+      <h3>No websites yet</h3>
+      <p>Click the Settings button to add your first website</p>
+    </div>
+  `;
+}
+
+function renderWebsites(websites) {
   if (websites.length === 0) {
-    websiteGrid.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📌</div>
-        <h3>No websites yet</h3>
-        <p>Click the Settings button to add your first website</p>
-      </div>
-    `;
+    renderEmptyState();
     return;
   }
-  
+
   websiteGrid.innerHTML = websites.map(site => {
     const domain = getDomain(site.url);
     const bgColor = site.color || getRandomColor();
     const icon = site.icon || '🌐';
-    
+
     return `
       <div class="website-card" onclick="window.open('${site.url}', '_blank')">
         <div class="card-icon-header" style="background: linear-gradient(135deg, ${bgColor} 0%, ${bgColor}dd 100%);">
@@ -238,7 +266,7 @@ async function loadWebsites() {
 async function loadWebsitesForSettings() {
   const response = await fetch('/api/websites');
   const websites = await response.json();
-  
+
   document.getElementById('websiteList').innerHTML = websites.map((site, index) => `
     <div class="website-item">
       <div class="item-icon" style="background: ${site.color || '#667eea'}">
@@ -267,7 +295,7 @@ async function moveWebsite(id, direction) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id, direction })
   });
-  
+
   if (response.ok) {
     loadWebsites();
     loadWebsitesForSettings();
@@ -278,13 +306,13 @@ renderIconSelector();
 
 async function deleteWebsite(id) {
   if (!confirm('Are you sure you want to delete this website?')) return;
-  
+
   const response = await fetch('/api/websites', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id })
   });
-  
+
   if (response.ok) {
     loadWebsites();
     loadWebsitesForSettings();
