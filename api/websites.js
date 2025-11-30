@@ -22,7 +22,7 @@ async function initDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    
+
     // Add icon column if it doesn't exist
     await client.query(`
       DO $$ 
@@ -35,7 +35,7 @@ async function initDatabase() {
         END IF;
       END $$;
     `);
-    
+
     // Add color column if it doesn't exist
     await client.query(`
       DO $$ 
@@ -48,7 +48,7 @@ async function initDatabase() {
         END IF;
       END $$;
     `);
-    
+
     // Add sort_order column if it doesn't exist
     await client.query(`
       DO $$ 
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     const { name, url, icon, color } = req.body;
-    
+
     if (!name || !url) {
       return res.status(400).json({ error: 'Name and URL are required' });
     }
@@ -90,7 +90,7 @@ export default async function handler(req, res) {
       // Get max sort_order
       const maxOrder = await client.query('SELECT COALESCE(MAX(sort_order), 0) as max FROM websites');
       const sortOrder = maxOrder.rows[0].max + 1;
-      
+
       const result = await client.query(
         'INSERT INTO websites (name, url, icon, color, sort_order) VALUES ($1, $2, $3, $4, $5) RETURNING *',
         [name, url, icon, color, sortOrder]
@@ -100,19 +100,38 @@ export default async function handler(req, res) {
       client.release();
     }
   } else if (req.method === 'PUT') {
-    const { id, direction } = req.body;
-    
+    const { id, direction, name, url, icon } = req.body;
+
     const client = await pool.connect();
     try {
+      // If name and url are provided, update the website details
+      if (name && url) {
+        const result = await client.query(
+          'UPDATE websites SET name = $1, url = $2, icon = $3 WHERE id = $4 RETURNING *',
+          [name, url, icon, id]
+        );
+
+        if (result.rows.length === 0) {
+          return res.status(404).json({ error: 'Website not found' });
+        }
+
+        return res.status(200).json(result.rows[0]);
+      }
+
+      // Otherwise, handle moving the website up or down
+      if (!direction) {
+        return res.status(400).json({ error: 'Either (name and url) or direction is required' });
+      }
+
       // Get current website
       const current = await client.query('SELECT * FROM websites WHERE id = $1', [id]);
       if (current.rows.length === 0) {
         return res.status(404).json({ error: 'Website not found' });
       }
-      
+
       const currentSite = current.rows[0];
       const currentOrder = currentSite.sort_order;
-      
+
       // Get adjacent website
       let adjacentQuery;
       if (direction === 'up') {
@@ -120,30 +139,30 @@ export default async function handler(req, res) {
       } else {
         adjacentQuery = 'SELECT * FROM websites WHERE sort_order > $1 ORDER BY sort_order ASC LIMIT 1';
       }
-      
+
       const adjacent = await client.query(adjacentQuery, [currentOrder]);
       if (adjacent.rows.length === 0) {
         return res.status(200).json({ message: 'Already at boundary' });
       }
-      
+
       const adjacentSite = adjacent.rows[0];
       const adjacentOrder = adjacentSite.sort_order;
-      
+
       // Swap sort orders
       await client.query('UPDATE websites SET sort_order = $1 WHERE id = $2', [adjacentOrder, id]);
       await client.query('UPDATE websites SET sort_order = $1 WHERE id = $2', [currentOrder, adjacentSite.id]);
-      
+
       res.status(200).json({ success: true });
     } finally {
       client.release();
     }
   } else if (req.method === 'DELETE') {
     const { id } = req.body;
-    
+
     if (!id) {
       return res.status(400).json({ error: 'ID is required' });
     }
-    
+
     const client = await pool.connect();
     try {
       await client.query('DELETE FROM websites WHERE id = $1', [id]);

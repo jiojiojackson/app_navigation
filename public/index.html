@@ -32,30 +32,122 @@
 
   <div id="settingsModal" class="modal">
     <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Settings</h2>
+      <div class="modal-header">
+        <h2>⚙️ Settings</h2>
+        <span class="close">&times;</span>
+      </div>
 
       <div id="loginForm" class="form-section">
-        <input type="password" id="password" placeholder="Enter password">
-        <button id="loginBtn">Login</button>
-        <p id="loginError" class="error"></p>
+        <div class="login-container">
+          <div class="lock-icon">🔒</div>
+          <h3>Authentication Required</h3>
+          <p class="login-subtitle">Please enter your password to access settings</p>
+          <input type="password" id="password" placeholder="Enter password">
+          <button id="loginBtn" class="primary-btn">
+            <span>Unlock Settings</span>
+            <span class="btn-icon">→</span>
+          </button>
+          <p id="loginError" class="error"></p>
+        </div>
       </div>
 
       <div id="settingsContent" style="display:none;">
-        <div class="form-section">
-          <h3>Add Website</h3>
-          <input type="text" id="websiteName" placeholder="Website Name">
-          <input type="url" id="websiteUrl" placeholder="Website URL">
-          <div class="icon-selector">
-            <label>Choose Icon:</label>
-            <div id="iconGrid" class="icon-grid"></div>
-          </div>
-          <button id="addBtn">Add Website</button>
+        <!-- Tab Navigation -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="add">
+            <span class="tab-icon">➕</span>
+            <span>Add Website</span>
+          </button>
+          <button class="tab-btn" data-tab="manage">
+            <span class="tab-icon">📋</span>
+            <span>Manage</span>
+          </button>
         </div>
 
-        <div class="form-section">
-          <h3>Manage Websites</h3>
-          <div id="websiteList"></div>
+        <!-- Add Website Tab -->
+        <div id="addTab" class="tab-content active">
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">🏷️</span>
+              Website Name
+            </label>
+            <input type="text" id="websiteName" placeholder="e.g., Google, GitHub, YouTube" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">🔗</span>
+              Website URL
+            </label>
+            <input type="url" id="websiteUrl" placeholder="https://example.com" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">🎨</span>
+              Choose Icon
+            </label>
+            <div id="iconGrid" class="icon-grid"></div>
+          </div>
+
+          <button id="addBtn" class="primary-btn full-width">
+            <span>Add Website</span>
+            <span class="btn-icon">✓</span>
+          </button>
+        </div>
+
+        <!-- Manage Websites Tab -->
+        <div id="manageTab" class="tab-content">
+          <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchWebsite" placeholder="Search websites..." class="search-input">
+          </div>
+          <div id="websiteList" class="website-list"></div>
+        </div>
+
+        <!-- Edit Website Form (Hidden by default) -->
+        <div id="editForm" class="edit-form" style="display:none;">
+          <div class="edit-header">
+            <h3>
+              <span class="edit-icon">✏️</span>
+              Edit Website
+            </h3>
+            <button class="cancel-edit-btn" onclick="cancelEdit()">✕</button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">🏷️</span>
+              Website Name
+            </label>
+            <input type="text" id="editWebsiteName" placeholder="Website Name" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">🔗</span>
+              Website URL
+            </label>
+            <input type="url" id="editWebsiteUrl" placeholder="Website URL" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <span class="label-icon">🎨</span>
+              Choose Icon
+            </label>
+            <div id="editIconGrid" class="icon-grid"></div>
+          </div>
+
+          <div class="edit-actions">
+            <button onclick="cancelEdit()" class="secondary-btn">
+              <span>Cancel</span>
+            </button>
+            <button id="saveEditBtn" class="primary-btn">
+              <span>Save Changes</span>
+              <span class="btn-icon">✓</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
